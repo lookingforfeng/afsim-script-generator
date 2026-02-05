@@ -304,3 +304,62 @@ afsim-script-generator/
 ---
 
 **注意：** 本项目需要AFSIM 2.9.0。如果您的安装路径不同，请修改 `config.txt` 中的 `AFSIM_INSTALL_DIR` 配置。
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 LICENSE 文件
+
+## 🔗 相关链接
+
+- [AFSIM 官方网站](https://github.com/afsim/afsim)
+- [项目仓库](https://github.com/lookingforfeng/afsim-script-generator)
+
+---
+
+## 👨‍💻 关于作者
+
+我是**冯zhangwei**，来自四川成都，致力于研究**无人机大规模异构协同智能化及仿真相关技术**。
+
+### 研究方向
+- 🚁 无人机集群协同
+- 🤖 异构系统智能化
+- 🎮 仿真技术与建模
+- 📊 AFSIM仿真应用
+
+### 联系方式
+
+欢迎交流讨论！可以通过以下方式联系我：
+
+<div align="center">
+
+#### 添加微信好友
+
+<img src="assets/wechat_contact.jpg" width="300" alt="微信联系方式">
+
+*扫码添加微信，一起交流无人机仿真技术*
+
+---
+
+#### 支持我的工作
+
+如果这个项目对你有帮助，欢迎请我喝杯咖啡！☕
+
+<img src="assets/wechat_reward.jpg" width="300" alt="微信赞赏码">
+
+*感谢你的支持！*
+
+</div>
+
+---
+
+<div align="center">
+
+**⭐ 如果觉得这个项目有用，请给个Star支持一下！⭐**
+
+Made with ❤️ by 冯zhangwei
+
+</div>
