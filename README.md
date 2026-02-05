@@ -185,18 +185,22 @@ WEAPON missile_1
 
 ```
 afsim-script-generator/
-├── README.md                 # 项目说明文档（中文）
-├── SKILL.md                  # 技能描述文件
-├── assets/                   # 资源文件
-│   └── template.wsf         # 脚本模板
-├── references/               # 参考文档
-│   ├── common_mistakes.md   # 常见错误和最佳实践
-│   ├── language_grammar.md  # 语言语法
-│   ├── script_types.md      # 数据类型和方法
-│   ├── commands.md          # 命令参考
-│   └── examples.md          # 示例脚本
-└── scripts/                  # 工具脚本
-    └── run_mission.py       # mission.exe 执行包装器
+├── README.md                      # 项目说明文档（中文）
+├── SKILL.md                       # 技能描述文件（带导航索引）
+├── assets/                        # 资源文件
+│   └── template.wsf              # 脚本模板
+├── references/                    # 参考文档（完整系统化）
+│   ├── common_mistakes.md        # 10条关键规则和常见错误
+│   ├── file_structure.md         # 标准AFSIM脚本文件结构
+│   ├── mover_reference.md        # 22+种mover类型完整参考
+│   ├── script_api_reference.md   # WsfPlatform/Sensor/Weapon完整API
+│   ├── commands_reference.md     # 完整命令语法参考
+│   ├── examples.md               # 4个完整工作示例+常用模式
+│   ├── language_grammar.md       # 语言语法（保留）
+│   ├── script_types.md           # 数据类型（保留）
+│   └── commands.md               # 命令参考（保留）
+└── scripts/                       # 工具脚本
+    └── run_mission.py            # mission.exe 执行包装器
 ```
 
 ## 🔧 故障排除
@@ -221,13 +225,20 @@ afsim-script-generator/
 
 ## 📚 参考文档
 
-详细文档位于 `references/` 目录：
+详细文档位于 `references/` 目录（已系统化完善）：
 
-- **references/common_mistakes.md** - **从这里开始** - 常见错误和避免方法
+### 核心参考文档（新增/更新）
+- **references/common_mistakes.md** - **从这里开始** - 10条关键规则，避免常见错误
+- **references/file_structure.md** - **新增** - 标准AFSIM脚本文件结构和模板
+- **references/mover_reference.md** - **新增** - 22+种mover类型完整参考（含所有参数）
+- **references/script_api_reference.md** - **新增** - WsfPlatform/Sensor/Weapon/Track完整API
+- **references/commands_reference.md** - **新增** - 完整命令语法参考（platform/route/sensor/weapon/processor）
+- **references/examples.md** - **重写** - 4个完整工作示例+5种常用模式
+
+### 保留的参考文档
 - **references/language_grammar.md** - 完整的脚本语言语法和语法规则
 - **references/script_types.md** - 所有可用的数据类型、类及其方法
 - **references/commands.md** - 按类别组织的综合命令参考
-- **references/examples.md** - 演示常见模式的示例脚本
 
 ## 💡 注意事项
 

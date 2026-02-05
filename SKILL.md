@@ -5,81 +5,112 @@ description: Generate and execute AFSIM (Advanced Framework for Simulation, Inte
 
 # AFSIM Script Generator
 
-This skill helps generate syntactically correct AFSIM scripts and execute them using mission.exe.
+Expert system for generating syntactically correct AFSIM 2.9.0 scripts and executing them using mission.exe.
 
-## ⚠️ 关键规则（生成脚本前必读）
+---
 
-**CRITICAL - 必须遵守以下规则，否则脚本会失败：**
+## 📚 Quick Navigation
 
-1. **文件扩展名必须是 `.txt`** - 不是 `.wsf`！
-2. **所有数值参数必须带单位** - 例如：`100 m/sec`、`30.0 sec`、`1000 m`
-3. **所有代码块必须有结束标记** - `end_mover`、`end_platform_type`、`end_processor` 等
-4. **不要使用不存在的脚本方法** - 避免 `Position()`、`Geodetic()`、`Time()` 等
-5. **路由中不要使用 `loop` 命令** - 会导致语法错误
+### 🚨 Start Here (CRITICAL)
+- [Critical Rules](#-critical-rules) - **READ FIRST** - Common mistakes that cause failures
+- [Quick Start Guide](#-quick-start-guide) - Get started in 4 steps
 
-**详细错误说明和最佳实践：** 见 `references/common_mistakes.md`
+### 📖 Core References
+- [File Structure](#-file-structure-reference) - Standard AFSIM script structure
+- [Mover Types](#-mover-types-reference) - All 22+ mover types with parameters
+- [Script API](#-script-api-reference) - WsfPlatform, WsfSensor, WsfWeapon classes
+- [Commands](#-commands-reference) - Platform, route, sensor, weapon commands
+- [Examples](#-examples-reference) - Complete working examples
 
-## Quick Start
+### 🔧 Advanced Topics
+- [Script Execution](#-script-execution) - Running scripts with mission.exe
+- [Troubleshooting](#-troubleshooting) - Common errors and solutions
 
-1. **Understand the requirement** - Ask clarifying questions about the simulation scenario
-2. **Generate the script** - Create WSF script using AFSIM syntax
-3. **Execute with mission.exe** - Run using `scripts/run_mission.py`
-4. **Validate output** - Check results and iterate if needed
+---
 
-## AFSIM Overview
+## 🚨 Critical Rules
 
-AFSIM (Advanced Framework for Simulation, Integration and Modeling) is a comprehensive simulation framework for modeling air, space, and ground operations. Scripts are written in a C-like language and saved as `.wsf` files.
+**MUST READ BEFORE GENERATING ANY SCRIPT**
 
-**Installation Directory:** `D:\Program Files\afsim2.9.0`
+### Rule 1: File Extension
+```
+✅ CORRECT: my_script.txt
+❌ WRONG:   my_script.wsf
+```
+**AFSIM scripts MUST use `.txt` extension, NOT `.wsf`**
 
-## Script Generation Workflow
+### Rule 2: Units Required
+```
+✅ CORRECT: speed 100 m/sec
+❌ WRONG:   speed 100
 
-### 1. Gather Requirements
+✅ CORRECT: altitude 5000 ft
+❌ WRONG:   altitude 5000
 
+✅ CORRECT: update_interval 1.0 sec
+❌ WRONG:   update_interval 1.0
+```
+**ALL numeric parameters MUST include units**
+
+### Rule 3: End Tags Required
+```
+✅ CORRECT:
+mover WSF_AIR_MOVER
+   maximum_speed 500 m/sec
+end_mover
+
+❌ WRONG:
+mover WSF_AIR_MOVER
+   maximum_speed 500 m/sec
+# Missing end_mover!
+```
+**Every block MUST have its corresponding `end_*` tag**
+
+### Rule 4: Coordinate Format
+```
+✅ CORRECT: position 38:44:52.3n 90:21:36.4w
+❌ WRONG:   position 38.44.52.3n 90.21.36.4w
+```
+**Use colon `:` to separate degrees:minutes:seconds**
+
+### Rule 5: Script API Methods
+```
+✅ CORRECT: PLATFORM.Name()
+✅ CORRECT: PLATFORM.Latitude()
+✅ CORRECT: PLATFORM.Altitude()
+
+❌ WRONG: Position()      # Does not exist
+❌ WRONG: Geodetic()      # Does not exist
+❌ WRONG: Time()          # Use TIME_NOW instead
+```
+**Only use documented API methods from script_api_reference.md**
+
+**For complete error list:** See `references/common_mistakes.md`
+
+---
+
+## 🚀 Quick Start Guide
+
+### Step 1: Understand Requirements
 Ask the user about:
-- Simulation scenario (air-to-air, air-to-ground, ISR, etc.)
-- Platforms involved (aircraft, missiles, ground units, satellites)
-- Sensors and weapons needed
-- Mission timeline and events
-- Output requirements
+- **Scenario type**: Air-to-air, air-to-ground, ISR, naval, etc.
+- **Platforms**: Aircraft, ships, ground vehicles, satellites
+- **Sensors**: Radar, ESM, EO/IR, etc.
+- **Weapons**: Missiles, bombs, guns
+- **Mission timeline**: Duration, key events
+- **Output needs**: Event logs, tracks, engagement results
 
-### 2. Generate Script
+### Step 2: Generate Script
+1. **Start with file structure** (see [File Structure Reference](#-file-structure-reference))
+2. **Define platform types** with movers (see [Mover Types](#-mover-types-reference))
+3. **Add sensors/weapons** (see [Commands Reference](#-commands-reference))
+4. **Create platform instances** with routes
+5. **Add processors** for behaviors (see [Script API](#-script-api-reference))
+6. **Set simulation end time**
 
-Use the AFSIM scripting language to create the scenario. Key elements:
-
-**Basic Structure:**
-```
-// Comments use // or /* */
-PLATFORM my_aircraft
-{
-    // Platform definition
-}
-
-SENSOR my_radar
-{
-    // Sensor definition
-}
-
-// Simulation control
-RUN_SIMULATION
-{
-    // Runtime commands
-}
-```
-
-**For detailed syntax, see:**
-- `references/common_mistakes.md` - **READ THIS FIRST** - Common errors and best practices
-- `references/language_grammar.md` - Complete language grammar
-- `references/script_types.md` - Data types and methods
-- `references/commands.md` - Command reference
-- `references/examples.md` - Example patterns
-
-### 3. Execute Script
-
-Use the provided Python wrapper:
-
+### Step 3: Execute Script
 ```bash
-python scripts/run_mission.py <script_file.wsf> [options]
+python scripts/run_mission.py <script_file.txt> [options]
 ```
 
 Options:
@@ -89,75 +120,442 @@ Options:
 - `-fio` - Flush output
 - `-sm` - Suppress messages
 
-### 4. Validate and Iterate
-
+### Step 4: Validate and Iterate
 - Check mission.exe output for errors
-- Verify simulation results match expectations
+- Verify simulation results
 - Adjust script and re-run as needed
 
-## Common Script Patterns
+---
 
-### Platform Definition
+## 📁 File Structure Reference
+
+**Location:** `references/file_structure.md`
+
+Standard AFSIM script structure:
+
 ```
-PLATFORM aircraft_1
-{
-    TYPE air_vehicle
-    POSITION 0.0 0.0 10000.0
-    VELOCITY 250.0 0.0 0.0
-}
+# Header comments
+script_interface
+   debug
+end_script_interface
+
+# Output configuration
+event_output
+   file output/simulation.evt
+   enable all
+end_event_output
+
+# Reusable definitions
+antenna_pattern [name] [...]
+sensor [name] [type] [...]
+weapon [name] [type] [...]
+
+# Platform types
+platform_type [name] WSF_PLATFORM
+   mover [type]
+      [parameters]
+   end_mover
+
+   sensor [name] [type]
+      [parameters]
+   end_sensor
+
+   processor [name] [type]
+      [parameters]
+   end_processor
+end_platform_type
+
+# Platform instances
+platform [instance-name] [type]
+   side [blue|red|white]
+
+   route
+      position [lat] [lon] altitude [alt] speed [speed]
+   end_route
+end_platform
+
+# Simulation control
+end_time [duration] sec
 ```
 
-### Sensor Definition
+**For complete structure guide:** Read `references/file_structure.md`
+
+---
+
+## 🚁 Mover Types Reference
+
+**Location:** `references/mover_reference.md`
+
+AFSIM supports 22+ mover types for different platform categories:
+
+### Air Movers
+- **WSF_AIR_MOVER** - Standard fixed-wing aircraft
+- **WSF_HELO_MOVER** - Helicopters and rotorcraft
+- **WSF_GUIDED_MOVER** - Guided missiles and munitions
+
+### Ground Movers
+- **WSF_GROUND_MOVER** - Ground vehicles
+- **WSF_RAIL_MOVER** - Rail-based systems
+
+### Naval Movers
+- **WSF_SURFACE_MOVER** - Surface ships
+- **WSF_SUBSURFACE_MOVER** - Submarines
+
+### Space Movers
+- **WSF_ORBITAL_MOVER** - Satellites and orbital platforms
+- **WSF_BALLISTIC_MOVER** - Ballistic missiles
+
+### Special Movers
+- **WSF_STATIONARY_MOVER** - Fixed installations
+- **WSF_SCRIPTED_MOVER** - Custom movement logic
+
+**Example:**
 ```
-SENSOR radar_1
-{
-    TYPE radar
-    PARENT aircraft_1
-    RANGE 100000.0
-}
+mover WSF_AIR_MOVER
+   maximum_speed 500 m/sec
+   minimum_speed 100 m/sec
+   default_radial_acceleration 5.0 g
+   default_climb_rate 50 m/sec
+end_mover
 ```
 
-### Weapon Definition
+**For complete mover reference:** Read `references/mover_reference.md`
+
+---
+
+## 🔧 Script API Reference
+
+**Location:** `references/script_api_reference.md`
+
+### Core Classes
+
+#### WsfPlatform
+Platform access and control:
 ```
-WEAPON missile_1
-{
-    TYPE air_to_air_missile
-    PARENT aircraft_1
-    QUANTITY 4
-}
+string Name()                    # Get platform name
+string Type()                    # Get platform type
+double Latitude()                # Get latitude (deg)
+double Longitude()               # Get longitude (deg)
+double Altitude()                # Get altitude (m)
+double X(), Y(), Z()             # Get XYZ position (m)
+double Heading()                 # Get heading (deg)
+double Speed()                   # Get speed (m/s)
+WsfSensor Sensor(string name)    # Get sensor by name
+WsfWeapon Weapon(string name)    # Get weapon by name
+WsfProcessor Processor(string)   # Get processor by name
+int SensorCount()                # Number of sensors
+WsfSensor SensorEntry(int i)     # Get sensor by index
 ```
 
-## Troubleshooting
+#### WsfSensor
+Sensor access and control:
+```
+string Name()                    # Get sensor name
+string Type()                    # Get sensor type
+bool IsTurnedOn()                # Check if sensor is on
+void TurnOn()                    # Turn sensor on
+void TurnOff()                   # Turn sensor off
+```
 
-**Syntax Errors:**
-- Check grammar in `references/language_grammar.md`
-- Verify command syntax in `references/commands.md`
-- Review example scripts in `references/examples.md`
+#### WsfWeapon
+Weapon access and control:
+```
+string Name()                    # Get weapon name
+string Type()                    # Get weapon type
+int QuantityRemaining()          # Get remaining quantity
+bool Fire(WsfTrack target)       # Fire at target
+```
 
-**Execution Errors:**
-- Ensure mission.exe path is correct
+#### WsfTrack
+Track information:
+```
+WsfTrackId TrackId()             # Get track ID
+string TargetName()              # Get target name
+double Latitude()                # Get track latitude
+double Longitude()               # Get track longitude
+double Altitude()                # Get track altitude
+double Range()                   # Get range to track
+bool LocationValid()             # Check if location valid
+```
+
+#### Array<T> and Map<K,V>
+Collections:
+```
+# Array methods
+void PushBack(T value)           # Add element
+T Get(int index)                 # Get element
+int Size()                       # Get size
+ArrayIterator GetIterator()      # Get iterator
+
+# Map methods
+void Insert(K key, V value)      # Insert key-value pair
+V Get(K key)                     # Get value by key
+bool Contains(K key)             # Check if key exists
+int Size()                       # Get size
+```
+
+### Global Variables
+```
+PLATFORM                         # Current platform
+PROCESSOR                        # Current processor
+SENSOR                           # Current sensor
+TRACK                            # Current track
+MESSAGE                          # Current message
+TIME_NOW                         # Current simulation time
+```
+
+**For complete API reference:** Read `references/script_api_reference.md`
+
+---
+
+## 📋 Commands Reference
+
+**Location:** `references/commands_reference.md`
+
+### Platform Commands
+```
+platform [name] [type]
+   side [blue|red|white|...]
+   position [lat] [lon] altitude [alt]
+   command_chain [name] [commander|SELF]
+
+   route
+      position [lat] [lon] altitude [alt] speed [speed]
+   end_route
+
+   sensor [name]
+      on  # or off
+   end_sensor
+
+   weapon [name]
+      quantity [number]
+      firing_interval [time] sec
+   end_weapon
+end_platform
+```
+
+### Route Commands
+```
+route
+   position [lat] [lon] altitude [alt] speed [speed]
+   position [lat] [lon] altitude [alt] agl speed [speed]
+   position [lat] [lon]  # Uses previous altitude/speed
+end_route
+```
+
+### Sensor Commands
+```
+sensor [name] [type]
+   frame_time [time] sec
+   location [x] [y] [z]
+   minimum_range [range] nm
+   maximum_range [range] nm
+   processor [processor-name]
+end_sensor
+```
+
+### Weapon Commands
+```
+weapon [name] [type]
+   launched_platform_type [type]
+   weapon_effects [effects-name]
+   category [category-name]
+end_weapon
+```
+
+### Processor Commands
+```
+processor [name] [type]
+   update_interval [time] sec
+
+   script_variables
+      [type] [name] = [value];
+   end_script_variables
+
+   script [return-type] [name]([parameters])
+      # Script code
+   end_script
+
+   on_initialize
+      # Initialization code
+   end_on_initialize
+
+   on_update
+      # Update code
+   end_on_update
+end_processor
+```
+
+**For complete commands reference:** Read `references/commands_reference.md`
+
+---
+
+## 📝 Examples Reference
+
+**Location:** `references/examples.md`
+
+### Example 1: Basic Air Platform
+Simple aircraft with route and script processor
+
+### Example 2: Strike Mission
+Complete scenario with sensors, weapons, track sharing, and engagement logic
+
+### Example 3: Ground Patrol
+Ground vehicle with patrol route
+
+### Example 4: Naval Platform
+Surface ship with radar sensor
+
+### Common Patterns
+- Script variables declaration
+- Looping through collections
+- Conditional logic
+- Message handling
+- Accessing platform components
+
+**For complete examples:** Read `references/examples.md`
+
+---
+
+## ⚙️ Script Execution
+
+### Mission.exe Location
+```
+D:\Program Files\afsim2.9.0\bin\mission.exe
+```
+
+### Using run_mission.py
+```bash
+# Basic execution
+python scripts/run_mission.py my_script.txt
+
+# With options
+python scripts/run_mission.py my_script.txt -es -fio
+
+# Real-time mode
+python scripts/run_mission.py my_script.txt -rt
+```
+
+### Execution Modes
+- **Event-stepped (-es)**: Default, fastest execution
+- **Real-time (-rt)**: Runs in real-time with frame stepping
+- **Frame-stepped (-fs)**: Non-realtime frame stepping
+
+### Output Files
+Scripts generate output in the `output/` directory:
+- `.evt` - Event log files
+- `.rep` - Binary replay files
+- Console output from mission.exe
+
+---
+
+## 🔍 Troubleshooting
+
+### Syntax Errors
+
+**Problem:** "Unexpected token" or "Parse error"
+- **Solution:** Check `references/common_mistakes.md` for common syntax errors
+- Verify all blocks have `end_*` tags
+- Check coordinate format (use `:` not `.`)
+- Ensure all numbers have units
+
+**Problem:** "Unknown command"
+- **Solution:** Verify command syntax in `references/commands_reference.md`
+- Check spelling and capitalization
+- Ensure command is in correct context
+
+### Execution Errors
+
+**Problem:** mission.exe not found
+- **Solution:** Verify path is `D:\Program Files\afsim2.9.0\bin\mission.exe`
 - Check file permissions
-- Verify all required files are present
+- Ensure AFSIM 2.9.0 is installed
 
-**Output Issues:**
-- Check simulation log files
-- Verify output directory exists
-- Review mission.exe console output
+**Problem:** Script file not found
+- **Solution:** Use `.txt` extension, not `.wsf`
+- Check file path is correct
+- Ensure file exists in specified location
 
-## Reference Files
+### Runtime Errors
 
-Load these as needed for detailed information:
+**Problem:** Platform not moving
+- **Solution:** Check mover parameters in `references/mover_reference.md`
+- Verify route has valid waypoints
+- Ensure speed is specified with units
 
-- **references/common_mistakes.md** - **START HERE** - Common errors and how to avoid them
-- **references/language_grammar.md** - Complete scripting language grammar and syntax rules
-- **references/script_types.md** - All available data types, classes, and their methods
-- **references/commands.md** - Comprehensive command reference organized by category
-- **references/examples.md** - Example scripts demonstrating common patterns
+**Problem:** Sensor not detecting
+- **Solution:** Verify sensor is turned on
+- Check sensor range and parameters
+- Ensure target is within sensor coverage
 
-## Notes
+**Problem:** Script variables not working
+- **Solution:** Declare variables in `script_variables` block
+- Check variable types match usage
+- Verify semicolons after declarations
 
-- **AFSIM scripts use `.txt` extension** - NOT `.wsf`!
-- **All numeric parameters require units** - e.g., `100 m/sec`, `30.0 sec`
-- Scripts are text-based and human-readable
-- mission.exe is located at `D:\Program Files\afsim2.9.0\bin\mission.exe`
-- Output includes event logs, binary reports, and replay files
+---
+
+## 📚 Complete Reference Library
+
+All reference files are located in the `references/` directory:
+
+1. **common_mistakes.md** - 10 critical rules to avoid common errors
+2. **file_structure.md** - Standard AFSIM script file structure and templates
+3. **mover_reference.md** - Complete reference for all 22+ mover types
+4. **script_api_reference.md** - Full API for WsfPlatform, WsfSensor, WsfWeapon, etc.
+5. **commands_reference.md** - Complete command syntax reference
+6. **examples.md** - Working examples and common patterns
+
+**Load these files as needed for detailed information.**
+
+---
+
+## 🎯 Best Practices
+
+1. **Always start with file_structure.md** to understand the standard layout
+2. **Check common_mistakes.md** before generating any script
+3. **Use examples.md** as templates for common scenarios
+4. **Verify mover types** in mover_reference.md before defining platforms
+5. **Reference script_api_reference.md** when writing processor scripts
+6. **Test incrementally** - start simple, add complexity gradually
+7. **Use meaningful names** for platforms, sensors, weapons
+8. **Add comments** to explain complex logic
+9. **Validate coordinates** - use proper lat/lon format
+10. **Check units** - every number needs units
+
+---
+
+## 📞 Support
+
+For AFSIM documentation and support:
+- AFSIM Installation: `D:\Program Files\afsim2.9.0`
+- Documentation: `C:\Users\fengz\Desktop\docs` (1602 HTML files)
+- Version: AFSIM 2.9.0
+
+---
+
+## 🔄 Workflow Summary
+
+```
+1. Understand Requirements
+   ↓
+2. Check common_mistakes.md
+   ↓
+3. Use file_structure.md as template
+   ↓
+4. Add platform types (mover_reference.md)
+   ↓
+5. Add sensors/weapons (commands_reference.md)
+   ↓
+6. Add behaviors (script_api_reference.md)
+   ↓
+7. Create platform instances
+   ↓
+8. Save as .txt file
+   ↓
+9. Execute with run_mission.py
+   ↓
+10. Validate output and iterate
+```
+
+**Remember: File extension MUST be `.txt` and ALL numbers MUST have units!**
