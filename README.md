@@ -2,8 +2,44 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![AFSIM Version](https://img.shields.io/badge/AFSIM-2.9.0-green.svg)](https://github.com/lookingforfeng/afsim-script-generator)
+[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-purple.svg)](SKILL.md)
+
+> **这是一个专为 Claude Code 设计的 Skill（技能）**
 
 一个用于生成和执行 AFSIM（Advanced Framework for Simulation, Integration and Modeling）脚本的工具集。本项目提供了完整的 AFSIM 2.9.0 脚本语言支持，包括平台、传感器、武器、行为和任务场景。
+
+## 🤖 关于 Claude Code Skill
+
+本项目是一个 **Claude Code Skill**，专为扩展 Claude Code 的 AI 编程助手能力而设计。当您在 Claude Code 中需要处理 AFSIM 相关任务时，这个 Skill 会自动激活，提供专业的 AFSIM 脚本生成和执行支持。
+
+### Skill 特征
+
+- **智能识别**：自动识别 AFSIM 相关的编程需求
+- **专业支持**：提供完整的 AFSIM 2.9.0 脚本语言语法支持
+- **上下文感知**：根据您的需求自动生成合适的脚本
+- **错误预防**：内置常见错误检测和最佳实践指导
+- **无缝集成**：与 Claude Code 的开发流程完美融合
+
+### 适用场景
+
+当您在 Claude Code 中遇到以下需求时，本 Skill 会自动激活：
+
+1. 创建 AFSIM/WSF 场景脚本
+2. 生成具有正确语法的仿真脚本
+3. 使用 mission.exe 运行 AFSIM 仿真
+4. 调试或修复 AFSIM 脚本语法错误
+5. 使用 AFSIM 脚本语言工作
+6. 执行和验证 AFSIM 仿真输出
+
+### 如何使用
+
+在 Claude Code 中，只需描述您的 AFSIM 仿真需求，例如：
+
+- "帮我创建一个空对空作战的 AFSIM 脚本"
+- "生成一个包含雷达和导弹的飞机平台脚本"
+- "运行这个 AFSIM 仿真并检查输出"
+
+Claude Code 会自动加载本 Skill，并根据您的需求生成相应的 AFSIM 脚本。
 
 ## ✨ 功能特性
 
