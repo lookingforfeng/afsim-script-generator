@@ -1,0 +1,53 @@
+# AFSIM Script Template
+# File extension must be .txt (not .wsf)
+# All numeric parameters must include units
+
+################################################################################
+# File Configuration
+################################################################################
+
+file_path .
+log_file simulation.log
+
+################################################################################
+# Platform Type Definitions
+################################################################################
+
+platform_type my_platform_type WSF_PLATFORM
+
+    side blue
+    category aircraft
+
+    mover WSF_AIR_MOVER
+        maximum_speed 250 m/sec
+        minimum_speed 50 m/sec
+        default_radial_acceleration 3.0 g
+        default_climb_rate 10 m/sec
+    end_mover
+
+end_platform_type
+
+################################################################################
+# Platform Instances
+################################################################################
+
+platform my_platform my_platform_type
+
+    side blue
+
+    route
+        position 0.0 0.0 1000.0
+            speed 100 m/sec
+        position 10000.0 0.0 1000.0
+            speed 100 m/sec
+    end_route
+
+    heading 90 deg
+
+end_platform
+
+################################################################################
+# Simulation Control
+################################################################################
+
+end_time 3600 sec
