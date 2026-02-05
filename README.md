@@ -53,15 +53,38 @@ Claude Code 会自动加载本 Skill，并根据您的需求生成相应的 AFSI
 
 ### 前置要求
 
-- AFSIM 2.9.0 安装在 `D:\Program Files\afsim2.9.0`
+- AFSIM 2.9.0（任意安装位置）
 - Python 3.x
 
-### 安装
+### 安装和配置
 
+1. **克隆或复制skill目录**
 ```bash
+# 如果是git仓库
 git clone https://github.com/lookingforfeng/afsim-script-generator.git
 cd afsim-script-generator
+
+# 或直接复制整个目录
 ```
+
+2. **配置AFSIM安装目录**
+
+编辑 `config.txt` 文件，设置你的AFSIM安装路径：
+```
+AFSIM_INSTALL_DIR=D:\Program Files\afsim2.9.0
+```
+
+**重要提示：**
+- 只需修改 `AFSIM_INSTALL_DIR` 这一行
+- mission.exe 和 documentation 路径会自动推导
+- 在不同电脑上使用时，只需更新这个配置即可
+
+3. **验证配置**
+```bash
+python scripts/run_mission.py --help
+```
+
+如果配置正确，会显示帮助信息和当前配置路径。
 
 ### 基本使用
 
@@ -231,8 +254,10 @@ afsim-script-generator/
 - **references/common_mistakes.md** - **从这里开始** - 10条关键规则，避免常见错误
 - **references/file_structure.md** - **新增** - 标准AFSIM脚本文件结构和模板
 - **references/mover_reference.md** - **新增** - 22+种mover类型完整参考（含所有参数）
-- **references/script_api_reference.md** - **新增** - WsfPlatform/Sensor/Weapon/Track完整API
+- **references/script_api_reference.md** - **新增** - WsfPlatform/Sensor/Weapon/Track完整API（158个方法）
 - **references/commands_reference.md** - **新增** - 完整命令语法参考（platform/route/sensor/weapon/processor）
+- **references/message_types_reference.md** - **新增** - WsfMessage消息系统完整参考（8种核心消息类型）
+- **references/sensor_types_reference.md** - **新增** - 特殊传感器类型参数（Radar/ESM/EOIR）
 - **references/examples.md** - **重写** - 4个完整工作示例+5种常用模式
 
 ### 保留的参考文档
@@ -245,22 +270,37 @@ afsim-script-generator/
 - **AFSIM 脚本使用 `.txt` 扩展名** - 不是 `.wsf`！
 - **所有数值参数都需要单位** - 例如：`100 m/sec`、`30.0 sec`
 - 脚本是基于文本的，人类可读
-- mission.exe 位于 `D:\Program Files\afsim2.9.0\bin\mission.exe`
+- **配置文件** - `config.txt` 中设置AFSIM安装目录
+- **mission.exe 位置** - 从配置文件自动推导：`{AFSIM_INSTALL_DIR}/bin/mission.exe`
+- **文档目录** - 从配置文件自动推导：`{AFSIM_INSTALL_DIR}/documentation/html/docs`
 - 输出包括事件日志、二进制报告和回放文件
 
-## 🤝 贡献
+## 📂 文档层次结构
 
-欢迎提交 Issue 和 Pull Request！
+本skill提供三层文档支持：
 
-## 📄 许可证
+### 1. SKILL.md - 快速参考（首选）
+- 快速导航索引
+- 关键规则和最佳实践
+- 各参考文档的摘要
+- **使用场景**：日常脚本编写，快速查找
 
-本项目采用 MIT 许可证 - 详见 LICENSE 文件
+### 2. references/ - 详细参考（常用）
+- 11个系统化参考文档
+- 完整的API、命令、示例
+- **使用场景**：需要详细信息时
 
-## 🔗 相关链接
+### 3. {AFSIM_INSTALL_DIR}/documentation/ - 终极参考（备用）
+- 1602个官方HTML文档
+- 最权威、最详细的信息
+- **使用场景**：
+  - 需要确认非常具体的细节
+  - 查找罕见参数或选项
+  - 验证边缘情况
+  - skill文档未覆盖的内容
 
-- [AFSIM 官方网站](https://github.com/afsim/afsim)
-- [项目仓库](https://github.com/lookingforfeng/afsim-script-generator)
+**建议使用顺序**：SKILL.md → references/ → documentation/
 
 ---
 
-**注意：** 本项目需要 AFSIM 2.9.0 安装在 `D:\Program Files\afsim2.9.0`。如果您的安装路径不同，请修改 `scripts/run_mission.py` 中的路径配置。
+**注意：** 本项目需要AFSIM 2.9.0。如果您的安装路径不同，请修改 `config.txt` 中的 `AFSIM_INSTALL_DIR` 配置。

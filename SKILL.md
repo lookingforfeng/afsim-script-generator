@@ -20,6 +20,8 @@ Expert system for generating syntactically correct AFSIM 2.9.0 scripts and execu
 - [Mover Types](#-mover-types-reference) - All 22+ mover types with parameters
 - [Script API](#-script-api-reference) - WsfPlatform, WsfSensor, WsfWeapon classes
 - [Commands](#-commands-reference) - Platform, route, sensor, weapon commands
+- [Message Types](#-message-types-reference) - WsfMessage system and all message types
+- [Sensor Types](#-sensor-types-reference) - Radar, ESM, EO/IR sensor parameters
 - [Examples](#-examples-reference) - Complete working examples
 
 ### 🔧 Advanced Topics
@@ -86,6 +88,52 @@ mover WSF_AIR_MOVER
 **Only use documented API methods from script_api_reference.md**
 
 **For complete error list:** See `references/common_mistakes.md`
+
+---
+
+## ⚙️ Configuration
+
+### config.txt - AFSIM Installation Directory
+
+**Location:** `config.txt` in skill root directory
+
+The skill uses a configuration file to locate your AFSIM installation. This makes it portable across different computers.
+
+**Configuration File:**
+```
+# AFSIM Installation Directory
+AFSIM_INSTALL_DIR=D:\Program Files\afsim2.9.0
+```
+
+**Derived Paths:**
+- **mission.exe**: `{AFSIM_INSTALL_DIR}/bin/mission.exe`
+- **Documentation**: `{AFSIM_INSTALL_DIR}/documentation/html/docs`
+
+**To use on a different computer:**
+1. Open `config.txt`
+2. Update `AFSIM_INSTALL_DIR` to your AFSIM installation path
+3. Save the file
+
+All paths (mission.exe, documentation) are automatically derived from this setting.
+
+### Documentation Directory - Ultimate Reference
+
+**Location:** `{AFSIM_INSTALL_DIR}/documentation/html/docs`
+
+The AFSIM documentation directory contains **1602 HTML files** with complete, authoritative information about every AFSIM feature.
+
+**When to use:**
+- ✅ Need to confirm very specific details
+- ✅ Looking for obscure parameters or options
+- ✅ Want to see official examples
+- ✅ Need to verify edge cases
+
+**When NOT to use:**
+- ❌ For common tasks (use skill references instead)
+- ❌ For quick lookups (use SKILL.md navigation)
+- ❌ For examples (use examples.md)
+
+**Think of it as:** The ultimate fallback reference when skill documentation doesn't cover a specific detail.
 
 ---
 
@@ -390,6 +438,148 @@ end_processor
 
 ---
 
+## 📨 Message Types Reference
+
+**Location:** `references/message_types_reference.md`
+
+AFSIM消息系统用于平台、传感器、处理器之间的通信。
+
+### 核心消息类型
+
+#### WsfMessage (基类)
+所有消息的基类：
+```javascript
+string Originator()                      // 消息发起平台
+string Type()                            // 消息类型
+int Priority()                           // 消息优先级
+void SetAuxData(string name, value)      // 设置辅助数据
+```
+
+#### WsfTrackMessage
+传递轨迹信息：
+```javascript
+WsfTrack Track()                         // 获取轨迹
+void SetTrack(WsfTrack aTrack)           // 设置轨迹
+```
+
+#### WsfControlMessage
+发送控制命令：
+```javascript
+void SetFunction(string aFunction)       // 设置功能
+void SetResource(string aResource)       // 设置资源
+void SetTrack(WsfTrack aTrack)           // 设置关联轨迹
+```
+
+#### WsfStatusMessage
+报告状态：
+```javascript
+void SetStatus(string aStatus)           // 设置状态
+void SetSystemName(string aSystemName)   // 设置系统名称
+```
+
+#### WsfBMTrackMessage
+战场管理轨迹（功能最丰富）：
+```javascript
+void SetLLA(double lat, double lon, double alt)  // 设置位置
+void SetIFFFriendly()                    // 设置IFF为友方
+void SetTrackingStatusNormal()           // 设置跟踪状态
+```
+
+### 消息处理示例
+```javascript
+on_message
+   type WSF_TRACK_MESSAGE
+      script
+         WsfTrackMessage msg = (WsfTrackMessage)MESSAGE;
+         WsfTrack track = msg.Track();
+         // 处理轨迹消息
+      end_script
+
+   type WSF_CONTROL_MESSAGE
+      script
+         WsfControlMessage msg = (WsfControlMessage)MESSAGE;
+         // 处理控制消息
+      end_script
+end_on_message
+```
+
+**For complete message types reference:** Read `references/message_types_reference.md`
+
+---
+
+## 📡 Sensor Types Reference
+
+**Location:** `references/sensor_types_reference.md`
+
+AFSIM提供多种特殊传感器类型，每种都有特定的参数和配置。
+
+### WSF_RADAR_SENSOR - 雷达传感器
+
+主动雷达探测传感器：
+
+**关键参数：**
+```
+transmitter
+   frequency <frequency>                 // 工作频率
+   power <power>                         // 发射功率
+   pulse_width <time>                    // 脉冲宽度
+   pulse_repetition_frequency <freq>     // PRF
+   antenna_pattern <pattern-name>        // 天线方向图
+end_transmitter
+
+receiver
+   noise_figure <db-ratio>               // 噪声系数
+   bandwidth <frequency>                 // 接收带宽
+end_receiver
+
+swerling_case [0|1|2|3|4]                // Swerling目标模型
+number_of_pulses_integrated <integer>    // 积分脉冲数
+one_m2_detect_range <length>             // 1平方米目标检测距离
+```
+
+### WSF_ESM_SENSOR - ESM传感器
+
+被动RF检测传感器（RWR、SIGINT、ELINT）：
+
+**关键参数：**
+```
+frequency_band <lower-freq> <upper-freq>
+   dwell_time <time>                     // 驻留时间
+   revisit_time <time>                   // 重访时间
+
+continuous_detection_sensitivity <db-power>  // 连续波灵敏度
+pulsed_detection_sensitivity <db-power>      // 脉冲灵敏度
+detection_threshold <db-ratio>           // 信噪比门限
+scan_on_scan_model <boolean>             // 扫描-扫描模型
+ranging_time <time>                      // 测距时间
+```
+
+### WSF_EOIR_SENSOR - 光电/红外传感器
+
+光学或红外成像传感器：
+
+**关键参数：**
+```
+pixel_count <horizontal> <vertical>      // 像素数量
+band [visual|short|medium|long|very_long]  // 波段选择
+atmospheric_attenuation <value> per <length>  // 大气衰减
+background_radiance <value> <units>      // 背景辐射
+detection_threshold <value>              // 信噪比门限
+noise_equivalent_irradiance <value> <units>  // NEI
+```
+
+### 传感器类型对比
+
+| 传感器 | 用途 | 检测方式 | 关键参数 |
+|-------|------|---------|---------|
+| **RADAR** | 主动雷达 | 主动发射接收 | 功率、PRF、脉冲宽度 |
+| **ESM** | 被动RF | 被动接收 | 灵敏度、频段 |
+| **EOIR** | 光电/红外 | 被动成像 | 像素、波段、NEI |
+
+**For complete sensor types reference:** Read `references/sensor_types_reference.md`
+
+---
+
 ## 📝 Examples Reference
 
 **Location:** `references/examples.md`
@@ -419,10 +609,16 @@ Surface ship with radar sensor
 
 ## ⚙️ Script Execution
 
-### Mission.exe Location
+### Configuration
+
+The skill reads AFSIM installation directory from `config.txt`:
 ```
-D:\Program Files\afsim2.9.0\bin\mission.exe
+AFSIM_INSTALL_DIR=D:\Program Files\afsim2.9.0
 ```
+
+All paths are derived from this:
+- **mission.exe**: `{AFSIM_INSTALL_DIR}/bin/mission.exe`
+- **Documentation**: `{AFSIM_INSTALL_DIR}/documentation/html/docs`
 
 ### Using run_mission.py
 ```bash
@@ -436,6 +632,13 @@ python scripts/run_mission.py my_script.txt -es -fio
 python scripts/run_mission.py my_script.txt -rt
 ```
 
+The script will:
+1. Load configuration from `config.txt`
+2. Verify mission.exe exists
+3. Display configuration paths
+4. Execute the script
+5. Capture and display output
+
 ### Execution Modes
 - **Event-stepped (-es)**: Default, fastest execution
 - **Real-time (-rt)**: Runs in real-time with frame stepping
@@ -446,6 +649,20 @@ Scripts generate output in the `output/` directory:
 - `.evt` - Event log files
 - `.rep` - Binary replay files
 - Console output from mission.exe
+
+### Troubleshooting Configuration
+
+**Problem:** mission.exe not found
+- **Solution:**
+  1. Open `config.txt`
+  2. Verify `AFSIM_INSTALL_DIR` points to your AFSIM installation
+  3. Check that `{AFSIM_INSTALL_DIR}/bin/mission.exe` exists
+
+**Problem:** Different computer, different path
+- **Solution:**
+  1. Copy the entire skill directory
+  2. Update `AFSIM_INSTALL_DIR` in `config.txt`
+  3. Everything else works automatically
 
 ---
 
@@ -502,9 +719,11 @@ All reference files are located in the `references/` directory:
 1. **common_mistakes.md** - 10 critical rules to avoid common errors
 2. **file_structure.md** - Standard AFSIM script file structure and templates
 3. **mover_reference.md** - Complete reference for all 22+ mover types
-4. **script_api_reference.md** - Full API for WsfPlatform, WsfSensor, WsfWeapon, etc.
+4. **script_api_reference.md** - Full API for WsfPlatform, WsfSensor, WsfWeapon, etc. (158 methods)
 5. **commands_reference.md** - Complete command syntax reference
-6. **examples.md** - Working examples and common patterns
+6. **message_types_reference.md** - ⭐ NEW: WsfMessage system and all message types
+7. **sensor_types_reference.md** - ⭐ NEW: Radar, ESM, EO/IR sensor parameters
+8. **examples.md** - Working examples and common patterns
 
 **Load these files as needed for detailed information.**
 
@@ -527,10 +746,21 @@ All reference files are located in the `references/` directory:
 
 ## 📞 Support
 
-For AFSIM documentation and support:
-- AFSIM Installation: `D:\Program Files\afsim2.9.0`
-- Documentation: `C:\Users\fengz\Desktop\docs` (1602 HTML files)
-- Version: AFSIM 2.9.0
+### Configuration
+- **Config File**: `config.txt` in skill root directory
+- **Default Install**: `D:\Program Files\afsim2.9.0`
+- **Update for your system**: Edit `AFSIM_INSTALL_DIR` in config.txt
+
+### AFSIM Resources
+- **Installation**: Configured via `config.txt`
+- **Documentation**: `{AFSIM_INSTALL_DIR}/documentation/html/docs` (1602 HTML files)
+- **Mission.exe**: `{AFSIM_INSTALL_DIR}/bin/mission.exe`
+- **Version**: AFSIM 2.9.0
+
+### Documentation Hierarchy
+1. **SKILL.md** - Quick reference and navigation (use first)
+2. **references/** - Comprehensive skill documentation (use for details)
+3. **{AFSIM_INSTALL_DIR}/documentation/** - Ultimate official reference (use for edge cases)
 
 ---
 

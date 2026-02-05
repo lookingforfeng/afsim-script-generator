@@ -1,0 +1,20 @@
+# AFSIM Configuration File
+
+# AFSIM Installation Directory
+# This is the root directory where AFSIM is installed
+# All other paths are derived from this base directory
+AFSIM_INSTALL_DIR=D:\Program Files\afsim2.9.0
+
+# Documentation Directory (derived from install dir)
+# This is the ultimate reference for detailed information
+# Format: {AFSIM_INSTALL_DIR}/documentation/html/docs
+# DOCUMENTATION_DIR=${AFSIM_INSTALL_DIR}/documentation/html/docs
+
+# Mission Executable (derived from install dir)
+# Format: {AFSIM_INSTALL_DIR}/bin/mission.exe
+# MISSION_EXE=${AFSIM_INSTALL_DIR}/bin/mission.exe
+
+# Notes:
+# - Change AFSIM_INSTALL_DIR to match your installation
+# - Documentation and mission.exe paths are automatically derived
+# - On different computers, only update AFSIM_INSTALL_DIR
