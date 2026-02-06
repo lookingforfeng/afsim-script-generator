@@ -34,6 +34,17 @@ Expert system for generating syntactically correct AFSIM 2.9.0 scripts and execu
 
 **MUST READ BEFORE GENERATING ANY SCRIPT**
 
+### ⚡ 脚本语法关键规则（新增）
+**在编写任何脚本前，必须查看：** `references/script_syntax_critical.md`
+
+这个文档包含了实际脚本编写中最容易出错的语法问题：
+- ❌ 使用 `cout` 输出 → ✅ 使用 `print()` 函数
+- ❌ `on_initialize` 中使用 `script` 包裹 → ✅ 直接写代码
+- ❌ 天线方向图直接定义参数 → ✅ 使用 `constant_pattern` 子块
+- ❌ 脉冲宽度用 `microsec` → ✅ 使用科学计数法 `1.0e-6 sec`
+- ❌ 使用三元运算符、fmod、类型转换 → ✅ 使用 if-else 和时间差比较
+- ❌ WSF_AIR_MOVER 使用 climb_rate → ✅ 只使用支持的参数
+
 ### Rule 1: File Extension
 ```
 ✅ CORRECT: my_script.txt
@@ -87,7 +98,7 @@ mover WSF_AIR_MOVER
 ```
 **Only use documented API methods from script_api_reference.md**
 
-**For complete error list:** See `references/common_mistakes.md`
+**For complete error list:** See `references/common_mistakes.md` and `references/script_syntax_critical.md`
 
 ---
 
@@ -716,14 +727,15 @@ Scripts generate output in the `output/` directory:
 
 All reference files are located in the `references/` directory:
 
-1. **common_mistakes.md** - 10 critical rules to avoid common errors
-2. **file_structure.md** - Standard AFSIM script file structure and templates
-3. **mover_reference.md** - Complete reference for all 22+ mover types
-4. **script_api_reference.md** - Full API for WsfPlatform, WsfSensor, WsfWeapon, etc. (158 methods)
-5. **commands_reference.md** - Complete command syntax reference
-6. **message_types_reference.md** - ⭐ NEW: WsfMessage system and all message types
-7. **sensor_types_reference.md** - ⭐ NEW: Radar, ESM, EO/IR sensor parameters
-8. **examples.md** - Working examples and common patterns
+1. **script_syntax_critical.md** - ⭐ NEW: 脚本编写关键语法规则速查（必读）
+2. **common_mistakes.md** - 10 critical rules to avoid common errors
+3. **file_structure.md** - Standard AFSIM script file structure and templates
+4. **mover_reference.md** - Complete reference for all 22+ mover types
+5. **script_api_reference.md** - Full API for WsfPlatform, WsfSensor, WsfWeapon, etc. (158 methods)
+6. **commands_reference.md** - Complete command syntax reference
+7. **message_types_reference.md** - WsfMessage system and all message types
+8. **sensor_types_reference.md** - Radar, ESM, EO/IR sensor parameters
+9. **examples.md** - Working examples and common patterns
 
 **Load these files as needed for detailed information.**
 
