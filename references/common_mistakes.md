@@ -1,5 +1,112 @@
 # AFSIM 常见错误和最佳实践
 
+## 🚨 脚本语法关键错误（必须避免）
+
+### ❌ 错误 1: 天线方向图语法错误
+**错误：** 直接在 antenna_pattern 块中定义参数
+```
+antenna_pattern J20_RADAR_PATTERN
+   azimuth_beamwidth 60 deg
+   elevation_beamwidth 60 deg
+   gain 35 db
+end_antenna_pattern
+```
+
+**正确：** 必须使用 constant_pattern 子块
+```
+antenna_pattern J20_RADAR_PATTERN
+   constant_pattern
+      peak_gain 35 db
+      azimuth_beamwidth 60 deg
+      elevation_beamwidth 60 deg
+   end_constant_pattern
+end_antenna_pattern
+```
+
+### ❌ 错误 2: 脉冲宽度单位格式错误
+**错误：** 使用 microsec 单位
+```
+pulse_width 1.0 microsec
+```
+
+**正确：** 使用科学计数法的秒
+```
+pulse_width 1.0e-6 sec
+```
+
+### ❌ 错误 3: WSF_AIR_MOVER 不支持的参数
+**错误：** 使用 default_climb_rate 和 default_descent_rate
+```
+mover WSF_AIR_MOVER
+   maximum_speed 600 m/sec
+   minimum_speed 100 m/sec
+   default_climb_rate 250 m/sec      # ❌ 不支持
+   default_descent_rate 200 m/sec    # ❌ 不支持
+end_mover
+```
+
+**正确：** 只使用支持的参数
+```
+mover WSF_AIR_MOVER
+   maximum_speed 600 m/sec
+   minimum_speed 100 m/sec
+   default_radial_acceleration 9.0 g
+end_mover
+```
+
+### ❌ 错误 4: 使用 C++ cout 输出
+**错误：** 使用 cout 和 endl
+```
+cout << TIME_NOW << " [" << PLATFORM.Name() << "] Status" << endl;
+```
+
+**正确：** 使用 print() 函数
+```
+print(TIME_NOW, " [", PLATFORM.Name(), "] Status");
+```
+
+### ❌ 错误 5: on_initialize 和 on_update 语法错误
+**错误：** 使用 script/end_script 包裹
+```
+on_initialize
+   script
+      startTime = TIME_NOW;
+   end_script
+end_on_initialize
+```
+
+**正确：** 直接写代码，不需要 script 包裹
+```
+on_initialize
+   startTime = TIME_NOW;
+end_on_initialize
+```
+
+### ❌ 错误 6: 使用不支持的函数和运算符
+**错误：** 使用 fmod()、三元运算符、类型转换
+```
+if (fmod(elapsedTime, 60.0) < 1.0)           # ❌ fmod 不存在
+print("Radar: ", (radar.IsTurnedOn() ? "ON" : "OFF"));  # ❌ 三元运算符不支持
+int seconds = int(elapsedTime);               # ❌ 类型转换不支持
+if (seconds % 60 == 0)                        # ❌ 模运算符不支持
+```
+
+**正确：** 使用简单的比较和 if-else
+```
+if (TIME_NOW - lastReportTime >= 60.0)
+{
+   if (radar.IsTurnedOn())
+   {
+      print("Radar: ON");
+   }
+   else
+   {
+      print("Radar: OFF");
+   }
+   lastReportTime = TIME_NOW;
+}
+```
+
 ## 关键规则（必须遵守）
 
 ### 1. 文件扩展名
