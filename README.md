@@ -668,6 +668,7 @@ afsim-script-generator/                    # AFSIM 脚本生成器 Claude Code S
 <img src="assets/wechat_contact.jpg" width="300" alt="微信联系方式">
 
 *扫码添加微信，一起交流无人机仿真技术*
+*ps:最近发现新手不学习，无脑问，什么这是个什么库？这个插件怎么用？什么是claude code？这种问题，既然都用大模型了，请自己问大模型哈。公益项目，微信可以加，问题选择性回答，工作比较忙，望理解*
 
 ---
 
